@@ -4,7 +4,47 @@
   <title></title>
 </head>
 <body>
-  <div id="root"></div>
+  <div id="sc-wrapper" style="position: relative; width: 300px; height: 250px; overflow: hidden;"></div>
   <script type="text/javascript" src="bundle.js"></script>
+  <style type="text/css">
+    #sc-wrapper {
+      position: relative;
+    }
+    #sc-wrapper .sc-slide {
+      position: absolute;
+      top: 0%;
+      left: 0%;
+    }
+    #sc-wrapper .sc-fade.sc-hide {
+      opacity: 0;
+    }
+    #sc-wrapper .sc-fade.sc-show {
+      opacity: 1;
+    }
+    #sc-wrapper .sc-slider-left.sc-hide {
+      left: 100%;
+    }
+    #sc-wrapper .sc-slider-left.sc-show {
+      left: 0%;
+    }
+    #sc-wrapper .sc-slider-right.sc-hide {
+      left: -100%;
+    }
+    #sc-wrapper .sc-slider-right.sc-show {
+      left: 0%;
+    }
+    #sc-wrapper .sc-slider-top.sc-hide {
+      top: 100%;
+    }
+    #sc-wrapper .sc-slider-top.sc-show {
+      top: 0%;
+    }
+    #sc-wrapper .sc-slider-bottom.sc-hide {
+      top: -100%;
+    }
+    #sc-wrapper .sc-slider-bottom.sc-show {
+      top: 0%;
+    }
+  </style>
 </body>
 </html>
