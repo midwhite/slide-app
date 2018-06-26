@@ -23,9 +23,9 @@ export class Slide {
   params: SlideParams;
 
   constructor(params: SlideParams) {
-    this.id = Slide.id++;
+    this.id = ++Slide.id;
     this.params = params;
-    this.display = false;
+    this.display = this.id === 1;
 
     this.width = params.width;
     this.height = params.height;
@@ -50,19 +50,18 @@ export class Slide {
   public transit(): void {
     this.display = !this.display;
     if (this.display) {
-      this.hide();
-    } else {
       this.show();
+    } else {
+      this.hide();
     }
   }
 
-  public show(): void {
+  private show(): void {
     this.visible = true;
-    this.display = true;
     this.updateDom();
   }
 
-  public hide(): void {
+  private hide(): void {
     this.visible = false;
     this.updateDom();
     // 不可視化した状態で初期化
@@ -89,7 +88,7 @@ export class Slide {
     });
   }
 
-  protected getDuration(): number {
+  public getDuration(): number {
     return this.params.duration || 300;
   }
 
