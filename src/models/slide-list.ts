@@ -3,30 +3,29 @@ import { SlideParams } from '../params/slide-params.interface';
 
 export class SlideList {
   private index: number = 0;
-  slides: Slide[] = [];
+  private slides: Slide[] = [];
 
-  constructor(params: SlideParams[]) {
-    this.slides = params.map((param: SlideParams) => new Slide(param));
+  constructor(slides: Slide[]) {
+    this.slides = slides;
     setTimeout(() => {
       this.transitState();
     }, 1000);
   }
 
   transitState(): void {
-    const maxIndex: number = this.slides.length - 1;
-    const prevSlide: Slide = (this.index === 0) ? this.slides[maxIndex] : this.slides[this.index - 1];
-    const nextSlide: Slide = (this.index === maxIndex) ? this.slides[0] : this.slides[this.index + 1];
-    prevSlide.transit();
-    nextSlide.transit();
-    this.index = (this.index + 1) % this.slides.length;
+    // スライドを更新
+    this.slides[this.index].show();
+    // 次のスライドが無ければ終了
+    if (!this.hasNext()){ return; }
+    // 次のスライドを表示する
     setTimeout(() => {
       this.transitState();
     }, 1000);
   }
+
+  private hasNext(): boolean {
+    this.index++;
+    return !!this.slides[this.index];
+  }
 }
 
-// params.forEach((param: SlideParams) => {
-//   const slide: Slide = new Slide(param);
-//   console.log(slide);
-//   setInterval(() => slide.transit(), 2000);
-// });

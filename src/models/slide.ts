@@ -1,7 +1,9 @@
 import { SlideParams } from '../params/slide-params.interface';
 
 export class Slide {
-  static id: number = 0;
+  static count: number = 0;
+  static readonly DefaultDulation: number = 300;
+  static readonly DefaultDelay: number = 0;
 
   // 基本情報
   id: number;
@@ -9,7 +11,6 @@ export class Slide {
   height: number;
   top: number;
   left: number;
-  visible: boolean = true;
   display: boolean;
 
   // スタイル情報
@@ -23,12 +24,14 @@ export class Slide {
   params: SlideParams;
 
   constructor(params: SlideParams) {
-    this.id = ++Slide.id;
+    this.id = ++Slide.count;
     this.params = params;
     this.display = this.id === 1;
 
+    // 基本情報
     this.width = params.width;
     this.height = params.height;
+    this.animType = params.animType;
 
     this.style = params.style || {};
 
@@ -38,38 +41,10 @@ export class Slide {
   private createDom(): void {
     // DOM要素を生成
     this.element = document.createElement(this.params.domName || 'div');
-    // 基本情報
-    this.animType = this.params.animType;
     // 状態に応じてDOMを更新
     this.updateDom();
     // DOMツリーに追加
     document.getElementById('sc-wrapper').appendChild(this.element);
-  }
-
-  // 状態を変更する
-  public transit(): void {
-    this.display = !this.display;
-    if (this.display) {
-      this.show();
-    } else {
-      this.hide();
-    }
-  }
-
-  private show(): void {
-    this.visible = true;
-    this.updateDom();
-  }
-
-  private hide(): void {
-    this.visible = false;
-    this.updateDom();
-    // 不可視化した状態で初期化
-    setTimeout(() => {
-      this.visible = true;
-      this.display = false;
-      this.updateDom();
-    }, this.getDuration());
   }
 
   // 状態に応じてDOMを更新
@@ -77,23 +52,36 @@ export class Slide {
     // クラス名を更新
     this.setClassNames();
     // スタイルを更新
-    this.element.style.display = (this.visible) ? 'block' : 'none';
     this.element.style.width = this.width + 'px';
     this.element.style.height = this.height + 'px';
-    this.element.style.transition = 'all ' + this.getDuration() + 'ms ' + this.getDelay() + 'ms ease';
+    this.element.style.transitionDelay = this.getDelay();
+    this.element.style.transitionDuration = this.getDuration();
+    this.element.style.transitionProperty = 'all';
+    this.element.style.transitionTimingFunction = 'ease';
 
+    // スタイルの生成
     Object.keys(this.params.style).forEach(property => {
       const value: string = this.params.style[property];
       this.element.style[property] = value;
     });
   }
 
-  public getDuration(): number {
-    return this.params.duration || 300;
+  public show(): void {
+    this.display = true;
+    this.updateDom();
   }
 
-  protected getDelay(): number {
-    return this.params.delay || 0;
+  public hide(): void {
+    this.display = false;
+    this.updateDom();
+  }
+
+  private getDuration(): string {
+    return (this.params.duration || Slide.DefaultDulation) + 'ms';
+  }
+
+  private getDelay(): string {
+    return (this.params.delay || Slide.DefaultDulation) + 'ms';
   }
 
   private setClassNames(): void {

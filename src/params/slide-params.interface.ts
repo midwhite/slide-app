@@ -1,3 +1,4 @@
+import { ContentParams } from './content-params.interface';
 import { Slide } from '../models/slide';
 
 export interface SlideParams {
@@ -10,4 +11,5 @@ export interface SlideParams {
   duration?: number;
   delay?: number;
   style?: any;
+  content?: ContentParams;
 }
