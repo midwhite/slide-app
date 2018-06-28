@@ -7,9 +7,11 @@ export class SlideList {
 
   constructor(slides: Slide[]) {
     this.slides = slides;
+
+    // 次のスライドを表示する
     setTimeout(() => {
       this.transitState();
-    }, 1000);
+    }, this.getNextDelay());
   }
 
   transitState(): void {
@@ -19,13 +21,17 @@ export class SlideList {
     if (!this.hasNext()){ return; }
     // 次のスライドを表示する
     setTimeout(() => {
+      this.index++;
       this.transitState();
-    }, 1000);
+    }, this.getNextDelay());
   }
 
   private hasNext(): boolean {
-    this.index++;
-    return !!this.slides[this.index];
+    return !!this.slides[this.index + 1];
+  }
+
+  private getNextDelay(): number {
+    return this.slides[this.index].getDuration() + this.slides[this.index + 1].getDelay();
   }
 }
 

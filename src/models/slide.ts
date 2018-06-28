@@ -1,9 +1,10 @@
 import { SlideParams } from '../params/slide-params.interface';
+import { Content } from './content';
 
 export class Slide {
-  static count: number = 0;
-  static readonly DefaultDulation: number = 300;
-  static readonly DefaultDelay: number = 0;
+  private static count: number = 0;
+  private static readonly DefaultDulation: number = 300;
+  private static readonly DefaultDelay: number = 0;
 
   // 基本情報
   id: number;
@@ -12,13 +13,13 @@ export class Slide {
   top: number;
   left: number;
   display: boolean;
+  script: string;
+  content: Content;
 
   // スタイル情報
-  style: any;
+  style: object;
 
   animType: Slide.AnimationType;
-  contentType: Slide.ContentType;
-
   element: HTMLElement;
 
   params: SlideParams;
@@ -32,6 +33,7 @@ export class Slide {
     this.width = params.width;
     this.height = params.height;
     this.animType = params.animType;
+    this.script = params.script;
 
     this.style = params.style || {};
 
@@ -39,12 +41,15 @@ export class Slide {
   }
 
   private createDom(): void {
-    // DOM要素を生成
     this.element = document.createElement(this.params.domName || 'div');
     // 状態に応じてDOMを更新
     this.updateDom();
     // DOMツリーに追加
     document.getElementById('sc-wrapper').appendChild(this.element);
+    // Contentオブジェクトを生成
+    this.content = new Content(this, this.params.content);
+    // ContentをDOMツリーに追加
+    this.element.appendChild(this.content.element);
   }
 
   // 状態に応じてDOMを更新
@@ -54,8 +59,8 @@ export class Slide {
     // スタイルを更新
     this.element.style.width = this.width + 'px';
     this.element.style.height = this.height + 'px';
-    this.element.style.transitionDelay = this.getDelay();
-    this.element.style.transitionDuration = this.getDuration();
+    this.element.style.transitionDelay = this.getDelay() + 'ms';
+    this.element.style.transitionDuration = this.getDuration() + 'ms';
     this.element.style.transitionProperty = 'all';
     this.element.style.transitionTimingFunction = 'ease';
 
@@ -69,6 +74,9 @@ export class Slide {
   public show(): void {
     this.display = true;
     this.updateDom();
+
+    // scriptの実行
+    this.executeScript();
   }
 
   public hide(): void {
@@ -76,12 +84,16 @@ export class Slide {
     this.updateDom();
   }
 
-  private getDuration(): string {
-    return (this.params.duration || Slide.DefaultDulation) + 'ms';
+  public getDuration(): number {
+    return this.params.duration || Slide.DefaultDulation;
   }
 
-  private getDelay(): string {
-    return (this.params.delay || Slide.DefaultDulation) + 'ms';
+  public getDelay(): number {
+    return this.params.delay || Slide.DefaultDulation;
+  }
+
+  private executeScript(): void {
+    if (this.script) { eval(this.script); }
   }
 
   private setClassNames(): void {
@@ -117,6 +129,6 @@ export namespace Slide {
   }
 
   export enum ContentType {
-    Text, Image, Link, Report, Video, Dom,
+    Text, Image, Link, Marquee, Report, Video, Dom,
   }
 }

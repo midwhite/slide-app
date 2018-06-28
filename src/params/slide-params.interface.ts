@@ -11,5 +11,6 @@ export interface SlideParams {
   duration?: number;
   delay?: number;
   style?: any;
+  script?: string;
   content?: ContentParams;
 }
